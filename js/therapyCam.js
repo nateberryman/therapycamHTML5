@@ -13,6 +13,7 @@ window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
 var therapyCam = {
 	supported:false,
+	drawRefreshRate:24,
 	windowWidth:0,
 	windowHeight:0,
 	canvasWidth:0,
@@ -95,7 +96,7 @@ var therapyCam = {
     		catch(err){
     			//put error catching here for loop if need be
     		}
-		}, 1000/30);
+		}, 1000/therapyCam.drawRefreshRate);
 		
 	},
 	drawSomethingToOverCanvas:function(){
