@@ -15,8 +15,8 @@ var therapyCam = {
 	supported:false,
 	windowWidth:0,
 	windowHeight:0,
-	canvasWidth:100,
-	canvasHeight:100,
+	canvasWidth:0,
+	canvasHeight:0,
 	init:function(){
 		log("init() called.");
 		this.sizeToScreen();
@@ -25,13 +25,17 @@ var therapyCam = {
 	sizeToScreen:function(){
 		log("sizeToScreen() called.");
 		var canvas = $('#therapyCamCanvas').get(0);
+		var canvasOverlay = $('#therapyCamCanvasOverlay').get(0);
 		var video = $('#therapyCamVideo').get(0);
 		therapyCam.windowWidth = window.innerWidth;
 		therapyCam.windowHeight = window.innerHeight;  
+		therapyCam.canvasWidth = window.innerWidth;
+		therapyCam.canvasHeight = window.innerHeight;
 		canvas.width = therapyCam.windowWidth;
 		canvas.height = therapyCam.windowHeight;
-		video.width = therapyCam.windowWidth;
-		video.height = therapyCam.windowHeight;
+		canvasOverlay.width = therapyCam.windowWidth;
+		canvasOverlay.height = therapyCam.windowHeight;
+		therapyCam.flipImage();
 	},
 	getCanvasWidth:function(canvas){
 		var width = $(canvas).width();
@@ -60,10 +64,45 @@ var therapyCam = {
             video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
         }
         therapyCam.sizeToScreen();
+
+        //play the video and then call the function that writes the video to the canvas    	
         video.play();
+       	therapyCam.drawCamToCanvas();   	
 	},
 	getCamFailure:function(e){
-		log("Failure. Couldn't get a webcam: " + e);
+		this.throwError("Failure. Couldn't get a webcam: " + e);
+	}, 
+	throwError:function(message){
+		log("ERROR:"+message);
+	}, 
+	flipImage:function(){
+		log("flipImage() called");
+		var canvas = $('#therapyCamCanvas').get(0);
+    	var context = canvas.getContext('2d');
+    	context.translate(therapyCam.windowWidth, 0);
+		context.scale(-1, 1);
+	}, 
+	drawCamToCanvas:function(){
+		var video = $('#therapyCamVideo').get(0);
+		var canvas = $('#therapyCamCanvas').get(0);
+    	var context = canvas.getContext('2d');
+
+    	setInterval(function () { 
+    		try{
+    			context.drawImage(video, 0, 0,therapyCam.windowWidth,therapyCam.windowHeight);
+    			therapyCam.drawSomethingToOverCanvas();
+    		}
+    		catch(err){
+    			//put error catching here for loop if need be
+    		}
+		}, 1000/30);
+		
+	},
+	drawSomethingToOverCanvas:function(){
+		var c=document.getElementById("therapyCamCanvasOverlay");
+		var ctx=c.getContext("2d");
+		ctx.fillStyle="#ff6633";
+		ctx.fillRect((therapyCam.canvasWidth/2)-75,(therapyCam.canvasHeight/2)-75,150,150);
 	}
 };
 //End of therapyCam object

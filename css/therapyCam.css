@@ -9,6 +9,17 @@ body {
 }
 #therapyCamCanvas {
 	margin:0px;
+	z-index:5;
+	position:absolute; 
+	top:0; 
+	left:0;
+}
+#therapyCamCanvasOverlay {
+	margin:0px;
+	z-index:10;
+	position:absolute; 
+	top:0; 
+	left:0;
 }
 video {
 	background-color: #000;
